@@ -1,35 +1,50 @@
 # How to generate a Light Yield map with the standalone simulation
  
 ## Introduction
-Prompts to run the standalone simulation with the upper part of FD2-VD PDS implemented in Geant4.  
 
+Prompts to run the standalone simulation with the upper part of FD2-VD PDS implemented in Geant4. 
 Created by Hamza Amar Es-sghir (IFIC-Valencia) <Hamza.Amar@ific.uv.es> & Sergio Manthey Corchado (CIEMAT-Madrid) <Sergio.manthey@ciemat.es>
+
+## Installation
+
+In order to install the simulation in one of the fermilab nodes, simply clone the repository in your working directory. 
+
+```bash
+git clone https://github.com/DUNE/G4_standalone_sim.git
+cd G4_standalone_sim/FD2_VD_PDS-FinalDesign
+```
 
 ## Setup
 
 In order to run the standalone simulation of the FD2-VD PDS, you do not need to setup LArSoft at all. 
 The version we have usually used for G4 is `v4_10_3_p03e`, doing the following setup:
 
-> `source /grid/fermiapp/products/common/etc/setup`  
-> `source /grid/fermiapp/products/dune/setup_dune.sh`  
-> `setup cmake v3_13_1`  
-> `setup root v6_18_02a -q e17:prof`  
-> `setup geant4 v4_10_3_p03e -q e17:prof` 
+```bash
+source /grid/fermiapp/products/common/etc/setup 
+source /grid/fermiapp/products/dune/setup_dune.sh 
+setup cmake v3_13_1
+setup root v6_18_02a -q e17:prof
+setup geant4 v4_10_3_p03e -q e17:prof 
+```
 
-The directory `newCryostat/vdrift_ref/src` contains different parameters within some `.cc` files. Some of them have to be tweaked depending on simulation purposes. The most relevant are listed below:
+The directory `FD2_VD_PDS-FinalDesign/vdrift_ref/src` contains different parameters within some `.cc` files. Some of them have to be tweaked depending on simulation purposes. The most relevant are listed below:
 
 - **Energy** of photons (Ar or Xe light) in `PrimaryGeneratorAction.cc`  
 - **Region where photons are generated** in `PrimaryGeneratorAction.cc`. Photons are randomly generated in the voxel size defined by the limits.  
 - **Optical properties** of the geometry or the own geometry in `DetectorConstruction.cc`.
 
+## Compilation
+
 Once finished, compile to obtain the `vdrift_build` directory and the executable, called `g4workshop`. To build this code is recommended to use the following commands:
 
-> `cmake -S vdrift_ref -B vdrift_build`  
-> `cmake --build vdrift_build -jN`, where `N` is the number of cores.
+```bash
+cmake -S vdrift_ref -B vdrift_build
+cmake --build vdrift_build -jN  # where `N` is the number of cores.
+```
 
-Once done, you just have to type the following command: `./vdrift_build/g4workshop X Y Z`. Coordinates are entered in meters.
+## Running the simulation
 
-
+Once done, you just have to type the following command: `./vdrift_build/g4workshop X Y Z`. Coordinates are entered in meters. This will generate a file called `arapuca.root` in the same directory.
 
 In a file `arapuca.root` you should see only 4 histograms; `hdX`, `hdY`, `hdZ`, to study the photon generation uniformity in a voxel, and `hv`. All of them defined in `RunAction.cc`. Other leafs of the tree does not open. The histogram of interest is `hv`(short for *histogram of volumes*) and the volume code associated to different X-ARAPUCAs channels will provide the number of photons reaching them in the simulation (have a look at `SteppingAction.cc`). 
 

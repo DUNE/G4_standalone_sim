@@ -39,7 +39,7 @@ Once finished, compile to obtain the `vdrift_build` directory and the executable
 
 ```bash
 cmake -S vdrift_ref -B vdrift_build
-cmake --build vdrift_build -jN  # where `N` is the number of cores.
+cmake --build vdrift_build
 ```
 
 ## Running the simulation
